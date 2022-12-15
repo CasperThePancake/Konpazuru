@@ -1,0 +1,47 @@
+<head>
+    <title>Konpazuru - Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="header">
+        <div id="navList">
+            <a id="navListItem" href="index.html">Play</a>
+            <a id="navListItem" href="create.html">Create</a>
+            <a id="navListItem" href="levels.html">Levels</a>
+            <a id="navListItem" href="docs.html">Docs</a>
+        </div>
+    </header>
+    <div id="gameDiv"><canvas id="game"></canvas></div>
+    <div id="gameInfo"><p id="gameInfoP" class="infoMoves">➡️ Moves: 0</p></div>
+    <div id="controls">
+        <span id="controlStart" onClick="toggleLevel()"><button id="startButton" title="Start the level">▶️</button></span>
+    </div>
+    <div id="loadLevel">
+        <h2 style="margin-bottom:5px;">Load level:</h2>
+        <input onkeypress="inputKeyPress(this, event)" id="loadInput" placeholder="Paste level code and press enter...">
+    </div>
+    <div id="moreInfo">
+        <h2 style="margin-bottom:5px;"><u>What is Konpazuru?</u></h2>
+        <p>Konpazuru is a grid-based puzzle game you can play in your browser. You can also create and share your own levels. The basics are pretty simple: you get to the flag, you win. However, the tiles you encounter will block your path, making your goal to reach the end in the least amount of moves.<br><br>There is no time limit, so take time to think about every move you make! To keep things simple, Konpazuru only contains <u>8 different tiles</u>, but these tiles offer tons of interesting levels to beat. Tiles can also have <u>modifiers</u>, allowing them to communicate with eachother, move in different ways and so much more.<br><br>Finally, you can select from <u>4 themes</u> for your level. Each one is based on one of the four seasons and they have effects on certain tiles' looks and behaviours.</p>
+    </div>
+    <div id="whyInfo">
+        <h2 style="margin-bottom:5px;"><u>Why play Konpazuru?</u></h2>
+        <p>While Konpazuru may look like another grid-based platformer, it's actually an intricate puzzle game that requires a lot of forward thinking. Every move you move advances the level forward: enemies will move, tiles will change, ... this means you'll have to imagine these changes in your head to make the right decision. There is no way to undo a move, so one wrong choice can cost you an extra move!<br><br>With that said, it's pretty clear that Konpazuru is a great puzzle game to test and improve your mental strength and forward-thinking skills. You could compare it to chess, where players simulate every possible move and its consequences in their head to come out victorious.</p>
+    </div>
+    <script>
+        function inputKeyPress(element, e) {
+            var charCode;
+            if(e && e.which){
+                charCode = e.which;
+            }
+            else if(window.event){
+                e = window.event;
+                charCode = e.keyCode;
+            }
+            if(charCode == 13){
+                loadLevel(element.value);
+            }
+        }
+    </script>
+    <script src="game.js"></script>
+</body>

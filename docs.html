@@ -1,0 +1,39 @@
+<head>
+    <title>Konpazuru - Docs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="header">
+        <div id="navList">
+            <a id="navListItem" href="index.html">Play</a>
+            <a id="navListItem" href="create.html">Create</a>
+            <a id="navListItem" href="levels.html">Levels</a>
+            <a id="navListItem" href="docs.html">Docs</a>
+        </div>
+    </header>
+    <div id="docs">
+        <h1>Creator docs</h1>
+        <p>Welcome to the Konpazuru creator docs! This page contains information for level creators, such as a list of every tile, tile modifier, and setting.</p>
+        <h2><b>List of tiles</b></h2>
+        <h4><u>Empty (1)</u></h4>
+        <p>This is the regular, empty tile. The player can walk through without any default effects.</p>
+        <h4><u>Water (2)</u></h4>
+        <p>The water tile acts similar to the empty tile, in the sense that the player can walk right through it. Moving objects like the Monkey can <u>not</u> walk through the water tile.</p>
+        <h4><u>Wall (3)</u></h4>
+        <p>Your average brick wall, it lets nothing through!</p>
+        <h4><u>Start (4)</u></h4>
+        <p>The player's starting position, you can only have one of these in your level. Acts like an empty tile.</p>
+        <h4><u>End (5)</u></h4>
+        <p>The level's ending position. If the player reaches it the level is cleared.</p>
+        <h4><u>Spike Trap (6)</u></h4>
+        <p>A painful but old spike trap. This trap will kill anyone who walks over it. Touching it will force the player back to the start.</p>
+        <h4><u>Monkey (7)</u></h4>
+        <p>This jolly animal just wants to play! Every time you move, the monkey will also move in a set direction. When it hits water or a wall, it will turn around. The monkey can only walk on empty tiles. If you land on the same tile as the Monkey you'll get thrown back to the start!</p>
+        <h2><b>List of settings</b></h2>
+        <p>Settings can be anything from level themes to advanced settings such as no-move moves.</p>
+        <h4><u>Level Theme</u></h4>
+        <p>This setting is set to 1 by default. Controls the theme of your level. There are 4 themes that can influence some of the tiles' looks and behaviors. The setting can have a value from 1-4, respectively correlating to Spring, Winter, Summer, and Autumn.</p>
+        <h4><u>No-move Moves</u></h4>
+        <p>If this setting is set to true, the player can press <u>Shift</u> on their keyboard to use up a move without moving to a different tile. Any tiles that get modified per move, like the Monkey, will still perform their actions when a no-move move is executed.</p>
+    </div>
+</body>

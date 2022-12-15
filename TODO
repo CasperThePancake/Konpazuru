@@ -1,0 +1,29 @@
+TO-DO:
+  ✔ Add end flag @done(22-12-11 14:38)
+  ✔ Add movement animation @done(22-12-11 14:39)
+  ✔ Add space button shortcut to start/stop @done(22-12-11 14:42)
+  ✔ Add player fade in and out animation @done(22-12-11 14:53)
+  ✔ Add sound effects @done(22-12-11 15:01)
+  ✔ Disable game input when in input box @done(22-12-11 15:28)
+  ✔ Add more themes @done(22-12-11 15:35)
+  ✔ Add check for 1 move @done(22-12-12 14:18)
+  ✔ Add spike tile @done(22-12-12 14:36)
+  ✔ Add Monkey "tile" @done(22-12-13 14:24)
+  ✔ Add Monkey player collision @done(22-12-14 16:19)
+  ✔ Add level name @done(22-12-14 15:58)
+  ✔ Add proper win screen @done(22-12-14 15:58)
+  ✔ Nicer start/end button @done(22-12-14 16:38)
+  ✔ Nicer level input thing @done(22-12-14 16:38)
+  ✔ Option to allow no-move moves @done(22-12-14 17:16)
+  ✔ Make var addition list more readable with list and comments @done(22-12-15 14:23)
+  ✔ Add text correction for 1 death and monkey throw(NOT S) @done(22-12-15 14:17)
+  ✔ Add proper sprites @done(22-12-15 15:56)
+  ✔ Add more to the index page in HTML @done(22-12-15 14:37)
+  - Add the eighth tile
+  - Add error messages with epic pop-ups for no start/stop, etc.
+
+  //FOR LATER
+  - Add modifiers
+  - Add level editor
+  - Add caching
+  - Add par value to code and show it

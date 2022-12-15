@@ -1,0 +1,121 @@
+/* Grids */
+/* Global */
+#gameDiv {
+    outline:3px black solid;
+    margin: auto;
+    text-align: center;
+    width:630px;
+    height:630px;
+}
+
+* {
+    font-family: 'Roboto';
+}
+
+#emptyGridText {
+    margin:auto;
+    display:inline-block;
+    font-size:60px;
+    vertical-align: middle;
+    line-height:600px;
+}
+
+#header {
+    height:40px;
+    background:linear-gradient(rgb(192, 241, 255), lightskyblue);
+    margin-bottom:10px;
+}
+
+#navList {
+    text-align: center;
+    width:inherit;
+    overflow:hidden;
+}
+
+#navListItem {
+    line-height:40px;
+    margin:auto 10px;
+    color:black;
+    text-decoration: none;
+    transition-duration: 100ms;
+}
+
+body {
+    margin:0;
+    background:linear-gradient(lightskyblue, rgb(192, 241, 255));
+}
+
+#navListItem:hover {
+    color:rgb(95, 95, 95);
+}
+
+#loadLevel {
+    text-align:center;
+}
+
+#loadInput {
+    width:300px;
+}
+
+#moreInfo, #whyInfo {
+    text-align:center;
+    width:800px;
+    margin:auto;
+}
+
+#docs {
+    text-align: center;
+    width:1000px;
+    margin:auto;
+}
+
+#controls {
+    text-align: center;
+    margin-top:15px;
+}
+
+#playerImg {
+    object-fit: contain;
+}
+
+#gameInfo {
+    margin: 10 auto;
+    text-align: center;
+}
+
+#gameInfoP {
+    display:inline;
+    width:max-content;
+    margin:5 5;
+}
+
+#startButton {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    padding:0;
+    font-size:40px;
+    margin-top:-15px;
+    text-shadow: 2px 2px 5px black;
+}
+
+#startButton:active {
+    text-shadow: 1px 1px 3px black;
+}
+
+#loadInput {
+    border-radius: 5px;
+}
+
+#konpazuruInfo {
+    width:800px;
+    margin:auto;
+    text-align: center;
+}
+
+canvas {
+    image-rendering:crisp-edges;
+}
