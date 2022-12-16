@@ -20,10 +20,13 @@ TO-DO:
   ✔ Add proper sprites @done(22-12-15 15:56)
   ✔ Add more to the index page in HTML @done(22-12-15 14:37)
   ✔ Add the eighth tile @done(22-12-16 15:56)
-  - Add error messages with epic pop-ups for no start/stop, etc.
+  ✔ Add error messages with epic pop-ups for no start/stop, etc. @done(22-12-16 17:44)
+  - Add splitting for multiple modifiers per tile and their importing into the level
+  - Add proper importing of the signal modifiers (they're objects in objects help)
+  - Make the modifiers have actual effect
+  - Code the signal system (fuck)
 
-  //FOR LATER
-  - Add modifiers
+  //FOR LATER (in order)
   - Add level editor
   - Add caching
   - Add par value to code and show it

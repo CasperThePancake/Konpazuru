@@ -38,13 +38,15 @@ var loadArray = []
 var levelArray
 var levelSize
 var levelElements = []
+var levelModifiers = []
 var settingsIndex
+var modifierIndex
 var levelSettings = {
     theme: 0,
     stayMove: 1
 }
 var monkeyArray = []
-var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;1;1"
+var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;0;0;0;0;0;0;0;0;0;M2=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1"
 var levelName = "Default";
 var levelCreator = "Casper"
 
@@ -258,7 +260,6 @@ function tileDraw(tile) {
     if (tile == "7") {
         let tileMonkeyFindY = (fGY + tileHeight) / tileHeight - 1
         let tileMonkeyFindX = (fGX + tileWidth) / tileWidth - 1
-        console.log("Monke: "+tileMonkeyFindX,tileMonkeyFindY)
         let tileMonkeyFind = monkeyArray.find(item => item.x === tileMonkeyFindX && item.y === tileMonkeyFindY)
         let tileMonkeyFindRot = tileMonkeyFind.direction - 1
         ctx.save();
@@ -450,6 +451,7 @@ function startLevel() {
     gridY = (y + tileHeight / 2) / tileHeight - 1
     gridX = (x + tileWidth / 2) / tileWidth - 1
     moves = 0;
+    gameInfo.classList.remove('error')
     gameInfo.style.visibility = 'visible';
     gameInfo.style.height = 'initial';
     startButton.innerHTML = "🛑"
@@ -461,6 +463,7 @@ function startLevel() {
     monkeyThrows = 0;
     winStrokeSpeed = 0
     winStrokeBackSpeed = 0
+    checkStartEnd()
 }
 
 function stopLevel() {
@@ -481,7 +484,6 @@ function formLevel(array) {
     monkeyArray = []
     for (let m = 0; m < tilesArray.length; m++) {
         if (tilesArray[m] == '7') {
-            console.log("Le monke has been found!")
             //create a monkeyArray element for the lovely monke
             monkeyArray.push({
                 x:m - Math.floor(m/levelSize)*grid.size,
@@ -503,6 +505,7 @@ function gridToIndex(gX,gY) {
 
 function endReached() {
     stopLevel()
+    gameInfo.classList.remove('error')
     gameInfo.style.visibility = 'visible';
     gameInfo.style.height = 'initial';
     if (moves == 1) {infoMoves.innerHTML = "🚩Level finished in "+moves+" move!"} else {infoMoves.innerHTML = "🚩Level finished in "+moves+" moves!"}
@@ -574,6 +577,7 @@ function loadLevel(code) {
     for (let i = 0; i < code.length; i++) {
         console.log("Now checking letter "+i+", which has a string of "+code[i])
         if (code[i] == ";") {
+            console.log("Result of index " +arrayIndex+": "+loadArray[arrayIndex]+" Next!")
             arrayIndex += 1
             loadArray[arrayIndex] = "";
         } else {
@@ -591,7 +595,34 @@ function loadLevel(code) {
     levelElements.length = levelSize * levelSize
     for (let i = 1; i <= levelSize * levelSize; i++) {
         levelElements[i - 1] = loadArray[i + 2]
-        if (i == levelSize * levelSize) settingsIndex = i + 3;
+        if (i == levelSize * levelSize) modifierIndex = i + 3;
+    }
+    //Level tile modifiers
+    levelModifiers = []
+    levelModifiers.length = levelSize * levelSize
+    for (let m = modifierIndex; m <= modifierIndex + levelSize * levelSize - 1; m++) {
+        levelModifiers[m - modifierIndex] = {
+            monkeyStartDir:1,
+            wallVisibility:1,
+            spikeActive:1,
+            sendSignal:{},
+            receiveSignal:{}
+        }
+        if (loadArray[m] == "0") {
+            //SET ALL MODIFIERS TO DEFAULT
+            console.log("No modifiers found!")
+        } else {
+            if (loadArray[m].includes(",")) {
+                //SPLIT THE DIFFERENT MODIFIERS AND APPLY THEM
+                console.log("Multiple modifiers found! Splitting...")
+            } else {
+                console.log("Found one modifier, adding to array...")
+                if (loadArray[m].includes("M1")) levelModifiers[m - modifierIndex].monkeyStartDir = parseInt(loadArray[m].slice(-1))
+                if (loadArray[m].includes("M2")) levelModifiers[m - modifierIndex].wallVisibility = parseInt(loadArray[m].slice(-1))
+                if (loadArray[m].includes("M3")) levelModifiers[m - modifierIndex].spikeActive = parseInt(loadArray[m].slice(-1))
+            }
+        }
+        if (m == modifierIndex + levelSize * levelSize - 1) settingsIndex = m + 1;
     }
     //Level settings
     levelSettings.theme = loadArray[settingsIndex]
@@ -736,6 +767,20 @@ function noMoveMove() {
 
 function buttonPress() {
     audButtonPress.play()
+}
+
+function checkStartEnd() {
+    //GENERAL ERROR CODE
+    if (!levelElements.includes("4") || !levelElements.includes("5") || levelElements.filter(x => x === "4").length > 1) {
+        stopLevel()
+        gameInfo.style.visibility = 'visible';
+        gameInfo.style.height = 'initial';
+        infoMoves.innerHTML = "Encountered an error while starting the level!"
+        infoMoves.classList.add('error')
+    }
+    if (!levelElements.includes("4")) infoMoves.innerHTML = "Error: The level has no starting position!"
+    if (!levelElements.includes("5")) infoMoves.innerHTML = "Error: The level has no end position!"
+    if (levelElements.filter(x => x === "4").length > 1) infoMoves.innerHTML = "Error: A level can only have one starting position!"
 }
 
 //DEFAULT LEVEL LOAD, KEEP AT BOTTOM!

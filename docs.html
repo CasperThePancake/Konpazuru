@@ -25,7 +25,7 @@
         <h4><u>Start (4)</u></h4>
         <p>The player's starting position, you can only have one of these in your level. Acts like an empty tile.</p>
         <h4><u>End (5)</u></h4>
-        <p>The level's ending position. If the player reaches it the level is cleared.</p>
+        <p>The level's ending position. If the player reaches it the level is cleared. You can have multiple endings in a single level.</p>
         <h4><u>Spike Trap (6)</u></h4>
         <p>A painful but old spike trap. This trap will kill anyone who walks over it. Touching it will force the player back to the start.</p>
         <h4><u>Monkey (7)</u></h4>
@@ -38,5 +38,17 @@
         <p>This setting is set to 1 by default. Controls the theme of your level. There are 4 themes that can influence some of the tiles' looks and behaviors. The setting can have a value from 1-4, respectively correlating to Spring, Winter, Summer, and Autumn.</p>
         <h4><u>No-move Moves</u></h4>
         <p>If this setting is set to true, the player can press <u>Shift</u> on their keyboard to use up a move without moving to a different tile. Any tiles that get modified per move, like the Monkey, will still perform their actions when a no-move move is executed.</p>
+        <h2><b>List of modifiers</b></h2>
+        <p>Modifiers can be applied to every tile seperately. You can change a monkey's starting direction, make a wall invisible and even send signals between tiles to toggle other modifiers.</p>
+        <h4><u>Monkey Starting Direction (M1)</u></h4>
+        <p>This modifier can only be applied to a monkey tile. You can choose from 4 cardinal directions that the monkey will face when the level starts.</p>
+        <h4><u>Wall Visibility (M2)</u></h4>
+        <p>The wall tiles you place in your level can be toggled visible or invisible using this modifier. There are two states (on/off). You can toggle this modifier using a signal.</p>
+        <h4><u>Spike Toggle (M3)</u></h4>
+        <p>Spike tiles can also be toggled on or off. If turned off the spike tile will act like an empty tile. There are two states (on/off). You can toggle this modifier using a signal.</p>
+        <h4><u>Send Signal (S1)</u></h4>
+        <p>This modifier allows your tile to send a signal over a certain <u>signal channel</u> when a chosen trigger occurs. The modifier has two parameters: <u>1. The channel it should send a signal over and 2. The signal trigger.</u> A list of triggers per tile can be found on this page.</p>
+        <h4><u>Receive Signal (S2)</u></h4>
+        <p>This modifier can receive a signal from a certain <u>signal channel</u>. When it receives a signal over that channel, a chosen action will occur. The modifier has two parameters: <u>1. The channel it can receive a signal from and 2. The signal action.</u> A list of actions per tile can also be found on this page.</p>
     </div>
 </body>

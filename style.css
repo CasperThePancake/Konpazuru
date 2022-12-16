@@ -119,3 +119,8 @@ body {
 canvas {
     image-rendering:crisp-edges;
 }
+
+.error {
+    color:red;
+    font-weight: bold;
+}
