@@ -33,7 +33,7 @@ var gridY;
 var tilesArray = []
 var startPos = {row:1, column:1}
 var noThrough = ["3"]
-var noMonkeyThrough = ["2","3","4","5"]
+var noMonkeyThrough = ["2","3","4","5","6","8"]
 var loadArray = []
 var levelArray
 var levelSize
@@ -44,7 +44,7 @@ var levelSettings = {
     stayMove: 1
 }
 var monkeyArray = []
-var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;1;5;1;1"
+var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;1;1"
 var levelName = "Default";
 var levelCreator = "Casper"
 
@@ -100,6 +100,8 @@ var sprSpike = new Image()
 sprSpike.src = 'assets/tiles/spike.png'
 var sprMonkey = new Image()
 sprMonkey.src = 'assets/tiles/monkey.png'
+var sprButton = new Image()
+sprButton.src = 'assets/tiles/button.png'
 //Background themes
 var bgGrass = new Image()
 bgGrass.src = 'assets/backgrounds/grass.jpg'
@@ -115,6 +117,8 @@ var audMove = new Audio('assets/sfx/move.wav')
 var audDeath = new Audio('assets/sfx/death.wav')
 var audMonkey = new Audio('assets/sfx/monkeyThrow.wav')
 var audSkip = new Audio('assets/sfx/moveSkip.wav')
+var audButtonPress = new Audio('assets/sfx/buttonpress.wav')
+var audButtonRelease = new Audio('assets/sfx/buttonrelease.wav')
 
 class Background {
     constructor(theme) {
@@ -263,6 +267,9 @@ function tileDraw(tile) {
         ctx.translate(-fGX-tileWidth/2, -fGY-tileHeight/2);
         ctx.drawImage(sprMonkey, fGX, fGY, tileWidth, tileHeight);
         ctx.restore();
+    }
+    if (tile == "8") {
+        ctx.drawImage(sprButton, fGX, fGY, tileWidth, tileHeight);
     }
 }
 
@@ -517,16 +524,14 @@ function endReached() {
 }
 
 function movAnimation(type) {
-    console.log("Running an animation!")
     if (movAni == movAniLength && type !== "monkey") {
         audMove.play()
         updateMonkeys()
+        if (tilesArray[gridToIndex(gridX, gridY)] == "8") audButtonRelease.play();
     }
     if (movAni == movAniLength && type == "monkey") {
         monkeyThrowAniDistX = (startPos.column*tileWidth - tileWidth / 2 - x) / movAniLength
         monkeyThrowAniDistY = (startPos.row*tileHeight - tileHeight / 2 - y) / movAniLength
-        console.log("The player will move "+monkeyThrowAniDistX+" on the X "+movAniLength+" times.")
-        console.log("The player will move "+monkeyThrowAniDistY+" on the Y "+movAniLength+" times.")
     }
     if (type == "left") {
         x -= tileWidth / movAniLength
@@ -550,6 +555,7 @@ function movAnimation(type) {
         btDelay = 40;
         gridY = (y + tileHeight / 2) / tileHeight - 1
         gridX = (x + tileWidth / 2) / tileWidth - 1
+        if (tilesArray[gridToIndex(gridX, gridY)] == "8") buttonPress();
         monkeyCross = false
     }
 }
@@ -726,6 +732,10 @@ function noMoveMove() {
     moves += 1
     audSkip.play()
     updateMonkeys()
+}
+
+function buttonPress() {
+    audButtonPress.play()
 }
 
 //DEFAULT LEVEL LOAD, KEEP AT BOTTOM!
