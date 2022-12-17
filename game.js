@@ -46,9 +46,10 @@ var levelSettings = {
     stayMove: 1
 }
 var monkeyArray = []
-var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;0;0;0;0;0;0;0;0;0;M2=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1"
+var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;0;0;0;0;0;0;0;M1=3;M2=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;M1=3;0;0;0;0;0;0;M3=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1"
 var levelName = "Default";
 var levelCreator = "Casper"
+var tileDrawMods;
 
 //PLAYER VARS
 var playerOpacity = 0;
@@ -104,6 +105,10 @@ var sprMonkey = new Image()
 sprMonkey.src = 'assets/tiles/monkey.png'
 var sprButton = new Image()
 sprButton.src = 'assets/tiles/button.png'
+var sprWallOff = new Image()
+sprWallOff.src = 'assets/tiles/brick_off.png'
+var sprSpikeOff = new Image()
+sprSpikeOff.src = 'assets/tiles/spike_off.png'
 //Background themes
 var bgGrass = new Image()
 bgGrass.src = 'assets/backgrounds/grass.jpg'
@@ -195,6 +200,8 @@ class Tiles {
         fGY = 0
         for (var r = 1; r <= grid.size; r++) {
             for (var c = 1; c <= grid.size; c++) {
+                tileDrawMods = {}
+                tileDrawMods = levelModifiers[(r-1)*grid.size+c-1]
                 tileDraw(this.tileArray[(r-1)*grid.size+c-1])
                 ctx.strokeRect(fGX, fGY, tileWidth, tileHeight);
                 if (this.tileArray[(r-1)*grid.size+c-1] == "4") {
@@ -246,7 +253,7 @@ function tileDraw(tile) {
         ctx.drawImage(sprWater, fGX, fGY, tileWidth, tileHeight);
     }
     if (tile == "3") {
-        ctx.drawImage(sprWall, fGX, fGY, tileWidth, tileHeight);
+        if (tileDrawMods.wallVisibility !== 0) ctx.drawImage(sprWall, fGX, fGY, tileWidth, tileHeight); else ctx.drawImage(sprWallOff, fGX, fGY, tileWidth, tileHeight);
     }
     if (tile == "4") {
         ctx.drawImage(sprStart, fGX, fGY, tileWidth, tileHeight);
@@ -255,7 +262,7 @@ function tileDraw(tile) {
         ctx.drawImage(sprEnd, fGX, fGY, tileWidth, tileHeight);
     }
     if (tile == "6") {
-        ctx.drawImage(sprSpike, fGX, fGY, tileWidth, tileHeight);
+        if (tileDrawMods.spikeActive == 1) ctx.drawImage(sprSpike, fGX, fGY, tileWidth, tileHeight); else ctx.drawImage(sprSpikeOff, fGX, fGY, tileWidth, tileHeight);
     }
     if (tile == "7") {
         let tileMonkeyFindY = (fGY + tileHeight) / tileHeight - 1
@@ -303,6 +310,7 @@ function update() {
     grid.draw()
     //PLAYER movement
     if (playing) {
+        checkWallVisibleOverride()
         if (btLeft && btDelay == 0 && movAni == 0 && x - tileWidth > 0 && !noThrough.includes(tilesArray[gridToIndex(gridX - 1, gridY)])) {
             moves += 1;
             playerRotation = 3
@@ -344,6 +352,8 @@ function update() {
             //Check if there is a monkey currently on the tile I'm moving to, I will cross it and it will throw me mid-move animation
             if ((tilesArray[gridToIndex(gridX, gridY + 1)]) == "7" && findMonkey.direction == 0) monkeyCross = true
         }
+        //IF COLLISION OVERRIDEN FOR WALL MODIFIER, RESTORE ARRAY
+        noThrough = ["3"]
         //ANIMATION and stuff
         if (movAni > 0) movAnimation(movAniType);
         if (btDelay > 0) btDelay -= 1;
@@ -353,7 +363,7 @@ function update() {
         infoMoves.innerHTML = "➡️ Moves: "+moves
         //CHECK FOR SPECIFIC TILES AND DO THINGS
         if (tilesArray[gridToIndex(gridX, gridY)] == "5") endReached();
-        if (tilesArray[gridToIndex(gridX, gridY)] == "6") killPlayer();
+        if (tilesArray[gridToIndex(gridX, gridY)] == "6" && levelModifiers[gridToIndex(gridX, gridY)].spikeActive == 1) killPlayer();
         if (tilesArray[gridToIndex(gridX, gridY)] == "7" && movAni == 0) monkeyThrowPlayer();
     }
     player.draw();
@@ -489,7 +499,7 @@ function formLevel(array) {
                 x:m - Math.floor(m/levelSize)*grid.size,
                 y:Math.floor(m/grid.size),
                 //0 = up, 1 = right, and so on...
-                direction:1
+                direction:levelModifiers[m].monkeyStartDir
             })
         }
     }
@@ -605,8 +615,8 @@ function loadLevel(code) {
             monkeyStartDir:1,
             wallVisibility:1,
             spikeActive:1,
-            sendSignal:{},
-            receiveSignal:{}
+            sendSignal:{signalChannel:0,signalTrigger:0},
+            receiveSignal:{signalChannel:0,signalAction:0}
         }
         if (loadArray[m] == "0") {
             //SET ALL MODIFIERS TO DEFAULT
@@ -615,11 +625,22 @@ function loadLevel(code) {
             if (loadArray[m].includes(",")) {
                 //SPLIT THE DIFFERENT MODIFIERS AND APPLY THEM
                 console.log("Multiple modifiers found! Splitting...")
+                let toSplit = loadArray[m]
+                let splitParts = []
+                let splitIndex = 0
+                for (i = 0; i < toSplit.length; i++) {
+                    if (toSplit[i] == ",") {
+                        splitIndex += 1;
+                    } else {
+                        if (!splitParts[splitIndex]) splitParts.push(toSplit[i]); else splitParts[splitIndex] = splitParts[splitIndex]+toSplit[i]
+                    }
+                }
+                console.log(splitParts)
+                //DONE SPLITTING, NOW INTERPRET ELEMENTS
+                splitParts.forEach(element => modifierInterpret(element,m))
             } else {
                 console.log("Found one modifier, adding to array...")
-                if (loadArray[m].includes("M1")) levelModifiers[m - modifierIndex].monkeyStartDir = parseInt(loadArray[m].slice(-1))
-                if (loadArray[m].includes("M2")) levelModifiers[m - modifierIndex].wallVisibility = parseInt(loadArray[m].slice(-1))
-                if (loadArray[m].includes("M3")) levelModifiers[m - modifierIndex].spikeActive = parseInt(loadArray[m].slice(-1))
+                modifierInterpret(loadArray[m],m)
             }
         }
         if (m == modifierIndex + levelSize * levelSize - 1) settingsIndex = m + 1;
@@ -631,6 +652,31 @@ function loadLevel(code) {
     //Generate grid
     formGrid(levelSize)
     formLevel(levelElements)
+}
+
+function modifierInterpret(modString,mm) {
+    console.log("Now interpreting: "+modString)
+    if (modString.includes("M1")) levelModifiers[mm - modifierIndex].monkeyStartDir = parseInt(modString.slice(-1))
+    if (modString.includes("M2")) levelModifiers[mm - modifierIndex].wallVisibility = parseInt(modString.slice(-1))
+    if (modString.includes("M3")) levelModifiers[mm - modifierIndex].spikeActive = parseInt(modString.slice(-1))
+    if (modString.includes("S1")) {
+        //GET THE INDEXES OF THE START AND END OF BOTH PARAMETERS
+        let param1Start = modString.indexOf("=") + 1
+        let param1Length = (modString.indexOf(":") - 1) - param1Start + 1
+        let param2Start = modString.indexOf(":") + 1
+        //GET THE PARAMETER VALUES AND APPLY THEM TO THE OBJECT
+        levelModifiers[mm - modifierIndex].sendSignal.signalChannel = parseInt(modString.substr(param1Start, param1Length))
+        levelModifiers[mm - modifierIndex].sendSignal.signalTrigger = parseInt(modString.substr(param2Start))
+    }
+    if (modString.includes("S2")) {
+        //GET THE INDEXES OF THE START AND END OF BOTH PARAMETERS
+        let param1Start = modString.indexOf("=") + 1
+        let param1Length = (modString.indexOf(":") - 1) - param1Start + 1
+        let param2Start = modString.indexOf(":") + 1
+        //GET THE PARAMETER VALUES AND APPLY THEM TO THE OBJECT
+        levelModifiers[mm - modifierIndex].receiveSignal.signalChannel = parseInt(modString.substr(param1Start, param1Length))
+        levelModifiers[mm - modifierIndex].receiveSignal.signalAction = parseInt(modString.substr(param2Start))
+    }
 }
 
     //Disable default scroll keys
@@ -781,6 +827,21 @@ function checkStartEnd() {
     if (!levelElements.includes("4")) infoMoves.innerHTML = "Error: The level has no starting position!"
     if (!levelElements.includes("5")) infoMoves.innerHTML = "Error: The level has no end position!"
     if (levelElements.filter(x => x === "4").length > 1) infoMoves.innerHTML = "Error: A level can only have one starting position!"
+}
+
+function checkWallVisibleOverride() {
+    if (btLeft && tilesArray[gridToIndex(gridX - 1, gridY)] == "3" && levelModifiers[gridToIndex(gridX - 1, gridY)].wallVisibility == 0) {
+        noThrough = []
+    }
+    if (btRight && tilesArray[gridToIndex(gridX + 1, gridY)] == "3" && levelModifiers[gridToIndex(gridX + 1, gridY)].wallVisibility == 0) {
+        noThrough = []
+    }
+    if (btUp && tilesArray[gridToIndex(gridX, gridY - 1)] == "3" && levelModifiers[gridToIndex(gridX, gridY - 1)].wallVisibility == 0) {
+        noThrough = []
+    }
+    if (btDown && tilesArray[gridToIndex(gridX, gridY + 1)] == "3" && levelModifiers[gridToIndex(gridX, gridY + 1)].wallVisibility == 0) {
+        noThrough = []
+    }
 }
 
 //DEFAULT LEVEL LOAD, KEEP AT BOTTOM!

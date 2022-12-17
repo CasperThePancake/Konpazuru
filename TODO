@@ -21,9 +21,14 @@ TO-DO:
   ✔ Add more to the index page in HTML @done(22-12-15 14:37)
   ✔ Add the eighth tile @done(22-12-16 15:56)
   ✔ Add error messages with epic pop-ups for no start/stop, etc. @done(22-12-16 17:44)
-  - Add splitting for multiple modifiers per tile and their importing into the level
-  - Add proper importing of the signal modifiers (they're objects in objects help)
-  - Make the modifiers have actual effect
+  ✔ Add splitting for multiple modifiers per tile and their importing into the level @done(22-12-17 11:12)
+  ✔ Add proper importing of the signal modifiers (they're objects in objects help) @done(22-12-17 11:34)
+  ✔ Make the modifiers have actual effect @done(22-12-17 12:32)
+    ✔ Wall visibility @done(22-12-17 12:09)
+      ✔ Texture @done(22-12-17 12:09)
+      ✔ Collision @done(22-12-17 12:09)
+    ✔ Spike work @done(22-12-17 12:20)
+    ✔ Monkey direction @done(22-12-17 12:26)
   - Code the signal system (fuck)
 
   //FOR LATER (in order)

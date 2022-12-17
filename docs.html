@@ -50,5 +50,13 @@
         <p>This modifier allows your tile to send a signal over a certain <u>signal channel</u> when a chosen trigger occurs. The modifier has two parameters: <u>1. The channel it should send a signal over and 2. The signal trigger.</u> A list of triggers per tile can be found on this page.</p>
         <h4><u>Receive Signal (S2)</u></h4>
         <p>This modifier can receive a signal from a certain <u>signal channel</u>. When it receives a signal over that channel, a chosen action will occur. The modifier has two parameters: <u>1. The channel it can receive a signal from and 2. The signal action.</u> A list of actions per tile can also be found on this page.</p>
+        <h2><b>Level Code Formatting</b></h2>
+        <p>For those of you who are interested in the inner workings of this game, you can find the main game code <a href="game.js">here</a>.<br>I would also like to address how level codes are formatted.</p>
+        <p>Parts of the code are seperated by semi-colons (;).<br>Here is an example of a level code:</p>
+        <p><span id="color_lime">My epic level;JohnDoe;</span><span id="color_red">2;4;3;1;5;</span><span id="color_yellow">0;M2=0;0;0;</span><span id="color_blue">1;1</span></p>
+        <p><span id="color_lime">This part</span> of the code indicates the level name as well as the level creator.</p>
+        <p><span id="color_red">This part</span> of the code contains the actual level elements. The first value (2) is the level size (2x2). The other 4 parts are the actual elements with their possible values (1-8) representing the 8 tiles in the game. The first element (4) is the tile in the top-left, the last element (5) is the element in the bottom-right.</p>
+        <p><span id="color_yellow">This part</span> of the code contains the modifiers for every tile. If a tile's modifier value is 0, that means it does not have any modifiers. In this example the Wall element has the modifier 'M2=0'. This means its 'wall visibility' modifier is set to 0. The wall will thus be invisible. Multiple modifiers for one tile are seperated using comma's (,) and for modifiers with multiple parameters those parameters are seperated using colons (:).</p>
+        <p><span id="color_blue">This final part</span> of the code contains the settings. You can find a list of them on this page, they are in the order of their values in the code.</p>
     </div>
 </body>
