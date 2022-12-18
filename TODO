@@ -29,9 +29,10 @@ TO-DO:
       ✔ Collision @done(22-12-17 12:09)
     ✔ Spike work @done(22-12-17 12:20)
     ✔ Monkey direction @done(22-12-17 12:26)
-  - Code the signal system (fuck)
+  ✔ Code the signal system (fuck) @done(22-12-17 13:41)
+  ✔ Slightly rework the signal system to work with multiple signal modifiers per tile @done(22-12-18 11:21)
+  - Add par value to code and show it
 
   //FOR LATER (in order)
   - Add level editor
   - Add caching
-  - Add par value to code and show it

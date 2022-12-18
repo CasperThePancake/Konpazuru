@@ -46,10 +46,11 @@ var levelSettings = {
     stayMove: 1
 }
 var monkeyArray = []
-var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;0;0;0;0;0;0;0;M1=3;M2=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;M1=3;0;0;0;0;0;0;M3=0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1"
+var oldCode = "Default;Casper;8;4;1;1;1;1;1;1;7;3;3;3;2;3;3;3;3;7;1;1;1;1;1;1;1;3;3;3;3;3;2;3;3;1;1;1;1;1;1;1;7;3;2;3;3;3;3;6;6;7;1;1;1;1;3;3;3;3;2;2;2;2;1;8;5;0;0;0;0;0;0;0;M1=3,S2=1:5;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;M1=3,S2=1:5;0;0;0;0;0;0;S2=1:4,S2=2:3;S2=1:4,S2=2:3;0;0;0;0;0;0;0;0;0;0;0;0;0;0;S1=1:1,S1=2:2;0;2;1;26"
 var levelName = "Default";
 var levelCreator = "Casper"
 var tileDrawMods;
+var levelPar;
 
 //PLAYER VARS
 var playerOpacity = 0;
@@ -85,6 +86,10 @@ var monkeyThrowAniDistY
 var monkeyCross = false
 var bgX = 0
 var bgY = 0
+var signals = []
+signals.length = 1000
+var oldGridX
+var oldGridY
 
 //LOAD SPRITES (spr)
 //Player
@@ -113,9 +118,11 @@ sprSpikeOff.src = 'assets/tiles/spike_off.png'
 var bgGrass = new Image()
 bgGrass.src = 'assets/backgrounds/grass.jpg'
 var bgSnow = new Image()
-bgSnow.src = 'assets/backgrounds/snow.webp'
+bgSnow.src = 'assets/backgrounds/snow.png'
 var bgSand = new Image()
-bgSand.src = 'assets/backgrounds/sand.jpg'
+bgSand.src = 'assets/backgrounds/sand.png'
+var bgAutumn = new Image()
+bgAutumn.src = 'assets/backgrounds/autumn.png'
 
 //LOAD AUDIO (aud)
 var audStart = new Audio('assets/sfx/start.wav')
@@ -145,6 +152,9 @@ class Background {
                 }
                 if (this.theme == 3) {
                     ctx.drawImage(bgSand, bgX, bgY, tileWidth, tileHeight)
+                }
+                if (this.theme == 4) {
+                    ctx.drawImage(bgAutumn, bgX, bgY, tileWidth, tileHeight)
                 }
                 bgX += tileWidth
             }
@@ -318,7 +328,6 @@ function update() {
             movAni = 20;
             movAniType = "left"
             let findMonkey = monkeyArray.find(item => item.x === gridX - 1 && item.y === gridY)
-            console.log(findMonkey)
             //Check if there is a monkey currently on the tile I'm moving to, I will cross it and it will throw me mid-move animation
             if ((tilesArray[gridToIndex(gridX - 1, gridY)]) == "7" && findMonkey.direction == 1) monkeyCross = true
         } 
@@ -360,11 +369,11 @@ function update() {
         player.x = x
         player.y = y
         ctx.globalAlpha = 1
-        infoMoves.innerHTML = "➡️ Moves: "+moves
+        infoMoves.innerHTML = "➡️ Moves: "+moves+"/"+levelPar
         //CHECK FOR SPECIFIC TILES AND DO THINGS
         if (tilesArray[gridToIndex(gridX, gridY)] == "5") endReached();
         if (tilesArray[gridToIndex(gridX, gridY)] == "6" && levelModifiers[gridToIndex(gridX, gridY)].spikeActive == 1) killPlayer();
-        if (tilesArray[gridToIndex(gridX, gridY)] == "7" && movAni == 0) monkeyThrowPlayer();
+        if (tilesArray[gridToIndex(gridX, gridY)] == "7" && movAni == 0) monkeyThrowPlayer(gridX,gridY);
     }
     player.draw();
     if (winScreen) winStrokesUpdate()
@@ -388,7 +397,6 @@ function update() {
         } else {
             playerOpacity = 0;
         }
-        console.log(damageFlicker)
         damageFlicker -= 0.25;
     }
     requestAnimationFrame(update);
@@ -518,7 +526,26 @@ function endReached() {
     gameInfo.classList.remove('error')
     gameInfo.style.visibility = 'visible';
     gameInfo.style.height = 'initial';
-    if (moves == 1) {infoMoves.innerHTML = "🚩Level finished in "+moves+" move!"} else {infoMoves.innerHTML = "🚩Level finished in "+moves+" moves!"}
+    if (moves == levelPar) {
+    if (moves == 1) {
+        infoMoves.innerHTML = "🚩Level finished in "+moves+" move! (On par)"} else {
+            infoMoves.innerHTML = "🚩Level finished in "+moves+" moves! (On par)"
+        }
+    }
+    if (moves > levelPar) {
+    let parResult = moves - levelPar
+    if (moves == 1) {
+        infoMoves.innerHTML = "🚩Level finished in "+moves+" move! ("+parResult+" move(s) over par)"} else {
+            infoMoves.innerHTML = "🚩Level finished in "+moves+" moves! ("+parResult+" move(s) over par)"
+        }
+    }
+    if (moves < levelPar) {
+    let parResult = levelPar - moves
+    if (moves == 1) {
+        infoMoves.innerHTML = "🚩Level finished in "+moves+" move! ("+parResult+" move(s) below par)"} else {
+            infoMoves.innerHTML = "🚩Level finished in "+moves+" moves! ("+parResult+" move(s) below par)"
+        }
+    }
     audWin.play()
     winStrokeSpeed = 0
     winScreen = true;
@@ -526,7 +553,6 @@ function endReached() {
     timeMinutes = Math.floor(Math.round((endTime - startTime) / 1000) / 60)
     timeSeconds = Math.floor((endTime - startTime) / 1000) - 60 * timeMinutes
     timeMilliseconds = Math.round((endTime - startTime)) - 60 * 1000 * timeMinutes - 1000 * timeSeconds
-    console.log("Amount of milliseconds passed: "+ (endTime - startTime))
     if (timeMinutes < 10) timeMinutes = "0"+timeMinutes
     if (timeSeconds < 10) timeSeconds = "0"+timeSeconds
     if (timeMilliseconds < 100) timeMilliseconds = "0"+timeMilliseconds
@@ -563,31 +589,30 @@ function movAnimation(type) {
         y += monkeyThrowAniDistY
     }
     movAni -= 1;
-    if (movAni == Math.round(movAniLength / 2) && monkeyCross) monkeyThrowPlayer();
+    if (movAni == Math.round(movAniLength / 2) && monkeyCross) monkeyThrowPlayer(gridX,gridY);
     if (movAni == 0) {
         btDelay = 40;
+        oldGridY = gridY
+        oldGridX = gridX
         gridY = (y + tileHeight / 2) / tileHeight - 1
         gridX = (x + tileWidth / 2) / tileWidth - 1
         if (tilesArray[gridToIndex(gridX, gridY)] == "8") buttonPress();
         monkeyCross = false
+        triggerCheck()
+        actionCheck()
     }
 }
 
 function loadLevel(code) {
-    console.log(code)
     oldCode = code
     document.getElementById("loadInput").value = ""
-    console.log("Level code:"+code)
-    console.log("Splitting parts...")
     //Split it in parts
     let arrayIndex = 0
     loadArray = [];
     loadArray.length = 1000;
     loadArray[arrayIndex] = "";
     for (let i = 0; i < code.length; i++) {
-        console.log("Now checking letter "+i+", which has a string of "+code[i])
         if (code[i] == ";") {
-            console.log("Result of index " +arrayIndex+": "+loadArray[arrayIndex]+" Next!")
             arrayIndex += 1
             loadArray[arrayIndex] = "";
         } else {
@@ -615,16 +640,14 @@ function loadLevel(code) {
             monkeyStartDir:1,
             wallVisibility:1,
             spikeActive:1,
-            sendSignal:{signalChannel:0,signalTrigger:0},
-            receiveSignal:{signalChannel:0,signalAction:0}
+            sendSignal:[],
+            receiveSignal:[]
         }
         if (loadArray[m] == "0") {
             //SET ALL MODIFIERS TO DEFAULT
-            console.log("No modifiers found!")
         } else {
             if (loadArray[m].includes(",")) {
                 //SPLIT THE DIFFERENT MODIFIERS AND APPLY THEM
-                console.log("Multiple modifiers found! Splitting...")
                 let toSplit = loadArray[m]
                 let splitParts = []
                 let splitIndex = 0
@@ -635,11 +658,9 @@ function loadLevel(code) {
                         if (!splitParts[splitIndex]) splitParts.push(toSplit[i]); else splitParts[splitIndex] = splitParts[splitIndex]+toSplit[i]
                     }
                 }
-                console.log(splitParts)
                 //DONE SPLITTING, NOW INTERPRET ELEMENTS
                 splitParts.forEach(element => modifierInterpret(element,m))
             } else {
-                console.log("Found one modifier, adding to array...")
                 modifierInterpret(loadArray[m],m)
             }
         }
@@ -648,6 +669,8 @@ function loadLevel(code) {
     //Level settings
     levelSettings.theme = loadArray[settingsIndex]
     levelSettings.stayMove = loadArray[settingsIndex + 1]
+    //Level par
+    levelPar = loadArray[settingsIndex + 2]
     //Load the level
     //Generate grid
     formGrid(levelSize)
@@ -655,7 +678,6 @@ function loadLevel(code) {
 }
 
 function modifierInterpret(modString,mm) {
-    console.log("Now interpreting: "+modString)
     if (modString.includes("M1")) levelModifiers[mm - modifierIndex].monkeyStartDir = parseInt(modString.slice(-1))
     if (modString.includes("M2")) levelModifiers[mm - modifierIndex].wallVisibility = parseInt(modString.slice(-1))
     if (modString.includes("M3")) levelModifiers[mm - modifierIndex].spikeActive = parseInt(modString.slice(-1))
@@ -665,8 +687,7 @@ function modifierInterpret(modString,mm) {
         let param1Length = (modString.indexOf(":") - 1) - param1Start + 1
         let param2Start = modString.indexOf(":") + 1
         //GET THE PARAMETER VALUES AND APPLY THEM TO THE OBJECT
-        levelModifiers[mm - modifierIndex].sendSignal.signalChannel = parseInt(modString.substr(param1Start, param1Length))
-        levelModifiers[mm - modifierIndex].sendSignal.signalTrigger = parseInt(modString.substr(param2Start))
+        levelModifiers[mm - modifierIndex].sendSignal.push({signalChannel: parseInt(modString.substr(param1Start, param1Length)), signalTrigger: parseInt(modString.substr(param2Start))})
     }
     if (modString.includes("S2")) {
         //GET THE INDEXES OF THE START AND END OF BOTH PARAMETERS
@@ -674,8 +695,7 @@ function modifierInterpret(modString,mm) {
         let param1Length = (modString.indexOf(":") - 1) - param1Start + 1
         let param2Start = modString.indexOf(":") + 1
         //GET THE PARAMETER VALUES AND APPLY THEM TO THE OBJECT
-        levelModifiers[mm - modifierIndex].receiveSignal.signalChannel = parseInt(modString.substr(param1Start, param1Length))
-        levelModifiers[mm - modifierIndex].receiveSignal.signalAction = parseInt(modString.substr(param2Start))
+        levelModifiers[mm - modifierIndex].receiveSignal.push({signalChannel: parseInt(modString.substr(param1Start, param1Length)), signalAction: parseInt(modString.substr(param2Start))})
     }
 }
 
@@ -724,6 +744,9 @@ function updateMonkeys() {
             //UPDATE THE GRID
             tilesArray[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = "1"
             tilesArray[gridToIndex(monkeyArray[i].x,monkeyArray[i].y - 1)] = "7"
+            //UPDATE THE MODIFIER ARRAY
+            levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y - 1)] = levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)]
+            levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = {monkeyStartDir:1,wallVisibility:1,spikeActive:1,sendSignal:[],receiveSignal:[]}
             //UPDATE THE MONKEY
             monkeyArray[i].y -= 1
         }
@@ -731,6 +754,9 @@ function updateMonkeys() {
             //UPDATE THE GRID
             tilesArray[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = "1"
             tilesArray[gridToIndex(monkeyArray[i].x + 1,monkeyArray[i].y)] = "7"
+            //UPDATE THE MODIFIER ARRAY
+            levelModifiers[gridToIndex(monkeyArray[i].x + 1,monkeyArray[i].y)] = levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)]
+            levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = {monkeyStartDir:1,wallVisibility:1,spikeActive:1,sendSignal:[],receiveSignal:[]}
             //UPDATE THE MONKEY
             monkeyArray[i].x += 1
         }
@@ -738,6 +764,9 @@ function updateMonkeys() {
             //UPDATE THE GRID
             tilesArray[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = "1"
             tilesArray[gridToIndex(monkeyArray[i].x,monkeyArray[i].y + 1)] = "7"
+            //UPDATE THE MODIFIER ARRAY
+            levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y + 1)] = levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)]
+            levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = {monkeyStartDir:1,wallVisibility:1,spikeActive:1,sendSignal:[],receiveSignal:[]}
             //UPDATE THE MONKEY
             monkeyArray[i].y += 1
         }
@@ -745,6 +774,9 @@ function updateMonkeys() {
             //UPDATE THE GRID
             tilesArray[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = "1"
             tilesArray[gridToIndex(monkeyArray[i].x - 1,monkeyArray[i].y)] = "7"
+            //UPDATE THE MODIFIER ARRAY
+            levelModifiers[gridToIndex(monkeyArray[i].x - 1,monkeyArray[i].y)] = levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)]
+            levelModifiers[gridToIndex(monkeyArray[i].x,monkeyArray[i].y)] = {monkeyStartDir:1,wallVisibility:1,spikeActive:1,sendSignal:[],receiveSignal:[]}
             //UPDATE THE MONKEY
             monkeyArray[i].x -= 1
         }
@@ -772,7 +804,6 @@ function winStrokesUpdate() {
     if (winStroke8.x > 0) winStroke8.x -= winStrokeSpeed;
     if (winStroke8.x < 0) winStroke8.x = 0;
     winTextOpacity = (winStrok1.x + 630) / 630
-    console.log(winTextOpacity)
 }
 
 function winStrokesUpdateBack() {
@@ -804,6 +835,7 @@ function monkeyThrowPlayer() {
     monkeyThrows += 1
     audMonkey.play()
 }
+
 
 function noMoveMove() {
     moves += 1
@@ -841,6 +873,58 @@ function checkWallVisibleOverride() {
     }
     if (btDown && tilesArray[gridToIndex(gridX, gridY + 1)] == "3" && levelModifiers[gridToIndex(gridX, gridY + 1)].wallVisibility == 0) {
         noThrough = []
+    }
+}
+
+function triggerCheck() {
+    signals = []
+    signals.length = 1000
+    for (let tGY = 0; tGY < grid.size; tGY++) {
+        for (let tGX = 0; tGX < grid.size; tGX++) {
+            if (levelModifiers[gridToIndex(tGX,tGY)].sendSignal.length > 0) {
+                levelModifiers[gridToIndex(tGX,tGY)].sendSignal.forEach(element => checkTrigger(element,tGX,tGY))
+            }
+        }
+    }
+}
+
+function checkTrigger(el,tX,tY) {
+    if (el.signalTrigger == 1 && tX == gridX && tY == gridY) {
+        signals[el.signalChannel] = 1
+    }
+    if (el.signalTrigger == 2 && tX == oldGridX && tY == oldGridY) {
+        signals[el.signalChannel] = 1
+    }
+}
+
+function actionCheck() {
+    for (let aGY = 0; aGY < grid.size; aGY++) {
+        for (let aGX = 0; aGX < grid.size; aGX++) {
+            if (levelModifiers[gridToIndex(aGX,aGY)].receiveSignal.length > 0) {
+                levelModifiers[gridToIndex(aGX,aGY)].receiveSignal.forEach(element => checkAction(element,aGX,aGY))
+            }
+        }
+    }
+}
+
+function checkAction(el,aX,aY) {
+    if (signals[el.signalChannel] == 1) {
+        if (el.signalAction == 1) {
+            levelModifiers[gridToIndex(aX,aY)].wallVisibility = 0;
+        }
+        if (el.signalAction == 2) {
+            levelModifiers[gridToIndex(aX,aY)].wallVisibility = 1;
+        }
+        if (el.signalAction == 3) {
+            levelModifiers[gridToIndex(aX,aY)].spikeActive = 1;
+        }
+        if (el.signalAction == 4) {
+            levelModifiers[gridToIndex(aX,aY)].spikeActive = 0;
+        }
+        if (el.signalAction == 5) {
+            let findMonkeyIndex = monkeyArray.findIndex(item => item.x === aX && item.y === aY)
+            if (monkeyArray[findMonkeyIndex].direction == 0) monkeyArray[findMonkeyIndex].direction = 2; else if (monkeyArray[findMonkeyIndex].direction == 1) monkeyArray[findMonkeyIndex].direction = 3; else if (monkeyArray[findMonkeyIndex].direction == 2) monkeyArray[findMonkeyIndex].direction = 0; else if (monkeyArray[findMonkeyIndex].direction == 3) monkeyArray[findMonkeyIndex].direction = 1;
+        }
     }
 }
 

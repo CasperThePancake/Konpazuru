@@ -35,7 +35,7 @@
         <h2><b>List of settings</b></h2>
         <p>Settings can be anything from level themes to advanced settings such as no-move moves.</p>
         <h4><u>Level Theme</u></h4>
-        <p>This setting is set to 1 by default. Controls the theme of your level. There are 4 themes that can influence some of the tiles' looks and behaviors. The setting can have a value from 1-4, respectively correlating to Spring, Winter, Summer, and Autumn.</p>
+        <p>This setting is set to 1 by default. Controls the theme of your level. There are 4 themes, the setting can have a value from 1-4, respectively correlating to Spring, Winter, Summer, and Autumn.</p>
         <h4><u>No-move Moves</u></h4>
         <p>If this setting is set to true, the player can press <u>Shift</u> on their keyboard to use up a move without moving to a different tile. Any tiles that get modified per move, like the Monkey, will still perform their actions when a no-move move is executed.</p>
         <h2><b>List of modifiers</b></h2>
@@ -53,10 +53,28 @@
         <h2><b>Level Code Formatting</b></h2>
         <p>For those of you who are interested in the inner workings of this game, you can find the main game code <a href="game.js">here</a>.<br>I would also like to address how level codes are formatted.</p>
         <p>Parts of the code are seperated by semi-colons (;).<br>Here is an example of a level code:</p>
-        <p><span id="color_lime">My epic level;JohnDoe;</span><span id="color_red">2;4;3;1;5;</span><span id="color_yellow">0;M2=0;0;0;</span><span id="color_blue">1;1</span></p>
+        <p><span id="color_lime">My epic level;JohnDoe;</span><span id="color_red">2;4;3;1;5;</span><span id="color_yellow">0;M2=0;0;0;</span><span id="color_blue">1;1;</span>26</p>
         <p><span id="color_lime">This part</span> of the code indicates the level name as well as the level creator.</p>
         <p><span id="color_red">This part</span> of the code contains the actual level elements. The first value (2) is the level size (2x2). The other 4 parts are the actual elements with their possible values (1-8) representing the 8 tiles in the game. The first element (4) is the tile in the top-left, the last element (5) is the element in the bottom-right.</p>
         <p><span id="color_yellow">This part</span> of the code contains the modifiers for every tile. If a tile's modifier value is 0, that means it does not have any modifiers. In this example the Wall element has the modifier 'M2=0'. This means its 'wall visibility' modifier is set to 0. The wall will thus be invisible. Multiple modifiers for one tile are seperated using comma's (,) and for modifiers with multiple parameters those parameters are seperated using colons (:).</p>
-        <p><span id="color_blue">This final part</span> of the code contains the settings. You can find a list of them on this page, they are in the order of their values in the code.</p>
+        <p><span id="color_blue">This part</span> of the code contains the settings. You can find a list of them on this page, they are in the order of their values in the code.</p>
+        <p>This final part of the code contains the moves par, the minimum amount of moves it takes to beat the level.</p>
+        <h2><b>List of Tile Triggers</b></h2>
+        <p>Tile triggers can be used in the send signal modifier. When the trigger is activated a signal will be sent over the specified channel. Most triggers apply to a single tile only, so make sure to get it right when making a level!</p>
+        <h4><u>Button Press (1)</u></h4>
+        <p>This is what the button tile was designed for! When the button is stepped on by the player a signal will be sent.</p>
+        <h4><u>Button Release (2)</u></h4>
+        <p>Only applies to the button tile. If a player steps on a button and then steps off the button, a signal will be sent.</p>
+        <h2><b>List of Tile Actions</b></h2>
+        <h4><u>Hide Wall (1)</u></h4>
+        <p>When a signal is received the wall tile will become hidden, meaning the player can walk through.</p>
+        <h4><u>Show Wall (2)</u></h4>
+        <p>When a signal is received the wall tile will become shown again, meaning the player can no longer walk through.</p>
+        <h4><u>Activate Spikes (3)</u></h4>
+        <p>When a signal is received the spike tile will become active, meaning the player will be killed when touching it.</p>
+        <h4><u>Disable Spikes (4)</u></h4>
+        <p>When a signal is received the spike tile will become inactive, meaning the player can walk through without effects.</p>
+        <h4><u>Rotate Monkey (5)</u></h4>
+        <p>When a signal is received the monkey will rotate 180°, meaning it will go the other way on its next move.</p>
     </div>
 </body>
